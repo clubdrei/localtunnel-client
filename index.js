@@ -9,12 +9,26 @@ let tunnel = null;
 let host = null;
 
 async function run() {
-  tunnel = await localtunnel({
+  if (!process.env.hasOwnProperty('LOCALTUNNEL_HOST') || process.env.LOCALTUNNEL_HOST.trim().length === 0) {
+    console.error(`ENV variable LOCALTUNNEL_HOST missing or invalid. Given value: ${process.env.LOCALTUNNEL_HOST}`);
+    process.exit(1);
+  }
+
+  if (!process.env.hasOwnProperty('LOCALHOST_SUBDOMAIN') || process.env.LOCALHOST_SUBDOMAIN.trim().length === 0) {
+    console.error(`ENV variable LOCALHOST_SUBDOMAIN missing or invalid. Given value: ${process.env.LOCALHOST_SUBDOMAIN}`);
+    process.exit(1);
+  }
+
+  const config = {
     host: `https://${process.env.LOCALTUNNEL_HOST}`,
-    local_host: `${process.env.LOCALTUNNEL_LOCAL_HOST}`,
-    port: `${process.env.LOCALTUNNEL_PORT}`,
-    subdomain: `${process.env.LOCALHOST_SUBDOMAIN}`,
-  });
+    local_host: process.env.LOCALTUNNEL_LOCAL_HOST || 'localhost',
+    port: process.env.LOCALTUNNEL_PORT || 80,
+    subdomain: process.env.LOCALHOST_SUBDOMAIN,
+  };
+
+  console.log('Tunnel config', config);
+
+  tunnel = await localtunnel(config);
   host = `https://${tunnel.clientId}.${process.env.LOCALTUNNEL_HOST}`;
   console.log(`Started tunnel for ${host}`);
   tunnel.on('close', () => {
