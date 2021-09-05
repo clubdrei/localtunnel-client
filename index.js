@@ -14,8 +14,8 @@ async function run() {
     process.exit(1);
   }
 
-  if (!process.env.hasOwnProperty('LOCALHOST_SUBDOMAIN') || process.env.LOCALHOST_SUBDOMAIN.trim().length === 0) {
-    console.error(`ENV variable LOCALHOST_SUBDOMAIN missing or invalid. Given value: ${process.env.LOCALHOST_SUBDOMAIN}`);
+  if (!process.env.hasOwnProperty('LOCALTUNNEL_SUBDOMAIN') || process.env.LOCALTUNNEL_SUBDOMAIN.trim().length === 0) {
+    console.error(`ENV variable LOCALTUNNEL_SUBDOMAIN missing or invalid. Given value: ${process.env.LOCALTUNNEL_SUBDOMAIN}`);
     process.exit(1);
   }
 
@@ -23,7 +23,7 @@ async function run() {
     host: `https://${process.env.LOCALTUNNEL_HOST}`,
     local_host: process.env.LOCALTUNNEL_LOCAL_HOST || 'localhost',
     port: process.env.LOCALTUNNEL_PORT || 80,
-    subdomain: process.env.LOCALHOST_SUBDOMAIN,
+    subdomain: process.env.LOCALTUNNEL_SUBDOMAIN,
   };
 
   console.log('Tunnel config', config);
