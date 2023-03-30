@@ -1,4 +1,9 @@
 const localtunnel = require('localtunnel');
+const util = require('node:util');
+
+// Force console.* output into one line. This makes searching in Grafana a lot easier.
+util.inspect.defaultOptions.breakLength = Infinity;
+util.inspect.defaultOptions.compact = true;
 
 // Keep process running:
 // https://stackoverflow.com/a/47456805
