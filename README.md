@@ -1,4 +1,4 @@
-# docker-localhost-tunnel
+# localtunnel-client
 
 Docker image with [localtunnel](https://github.com/localtunnel/localtunnel)
 
