@@ -1,0 +1,12 @@
+version: "2.4"
+services:
+  production_tunnel:
+    image: clubdrei/localtunnel-client
+    restart: unless-stopped
+    environment:
+      LOCALTUNNEL_HOST: "example.com"
+      LOCALTUNNEL_SUBDOMAIN: "random-subdomain"
+      LOCALTUNNEL_LOCAL_HOST: "webserver"
+  webserver:
+    image: nginx:stable-alpine-slim
+    restart: unless-stopped
