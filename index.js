@@ -36,13 +36,24 @@ async function run() {
   tunnel = await localtunnel(config);
   host = `https://${tunnel.clientId}.${process.env.LOCALTUNNEL_HOST}`;
   console.log(`Started tunnel for ${host}`);
+
+  tunnel.on('request', (request) => {
+    console.debug(`Request for tunnel ${host}`, request);
+  });
+
+  tunnel.on('error', (error) => {
+    console.error(`Error in tunnel ${host}`, error);
+  });
+
   tunnel.on('close', () => {
+    console.debug(`Closed tunnel for ${host}`);
     process.exit(0);
   });
 }
 
 ['SIGINT', 'SIGTERM'].forEach(function(signal) {
   process.on(signal, function() {
+    console.debug(`Received signal ${signal}`)
     if (tunnel !== null) {
       tunnel.close();
       console.log(`Stopped tunnel for ${host}`);
