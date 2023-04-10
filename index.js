@@ -1,5 +1,6 @@
 const localtunnel = require('localtunnel');
 const util = require('node:util');
+const { buildConfig } = require('./lib/config');
 
 // Force console.* output into one line. This makes searching in Grafana a lot easier.
 util.inspect.defaultOptions.breakLength = Infinity;
@@ -13,45 +14,12 @@ setInterval(() => {
 let tunnel = null;
 let host = null;
 
-/**
- * Returns true for 1, "1" and "true" and false for every other value
- * @param {String|Number} value
- * @return {boolean}
- */
-function isTrue(value) {
-    if (value === 1 || value === '1' || value === 'true') {
-        return true;
-    }
-    return false;
-}
-
 async function run() {
-  if (!process.env.hasOwnProperty('LOCALTUNNEL_HOST') || process.env.LOCALTUNNEL_HOST.trim().length === 0) {
-    console.error(`ENV variable LOCALTUNNEL_HOST missing or invalid. Given value: ${process.env.LOCALTUNNEL_HOST}`);
-    process.exit(1);
-  }
-
-  if (!process.env.hasOwnProperty('LOCALTUNNEL_SUBDOMAIN') || process.env.LOCALTUNNEL_SUBDOMAIN.trim().length === 0) {
-    console.error(`ENV variable LOCALTUNNEL_SUBDOMAIN missing or invalid. Given value: ${process.env.LOCALTUNNEL_SUBDOMAIN}`);
-    process.exit(1);
-  }
-
-  let protocol = 'https';
-  if(process.env.hasOwnProperty('LOCALTUNNEL_SECURE') && !isTrue(process.env.LOCALTUNNEL_SECURE)) {
-    protocol = 'http';
-  }
-
-  const config = {
-    host: `${protocol}://${process.env.LOCALTUNNEL_HOST}`,
-    local_host: process.env.LOCALTUNNEL_LOCAL_HOST || 'localhost',
-    port: process.env.LOCALTUNNEL_PORT || 80,
-    subdomain: process.env.LOCALTUNNEL_SUBDOMAIN,
-  };
-
+  const config = buildConfig();
   console.log('Tunnel config', config);
 
   tunnel = await localtunnel(config);
-  host = `${protocol}://${tunnel.clientId}.${process.env.LOCALTUNNEL_HOST}`;
+  host = `${config.protocol}://${tunnel.clientId}.${process.env.LOCALTUNNEL_HOST}`;
   console.log(`Started tunnel for ${host}`);
 
   tunnel.on('request', (request) => {

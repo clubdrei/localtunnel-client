@@ -24,6 +24,7 @@ services:
       LOCALTUNNEL_SECURE: "false"
       LOCALTUNNEL_SUBDOMAIN: "client-1"
       LOCALTUNNEL_LOCAL_HOST: "webserver"
+      LOCALTUNNEL_HEALTHCHECK_PATH: "/"
     depends_on:
       - localtunnel_server
       - webserver
